@@ -21,6 +21,7 @@ class LocalEnvironment:
         """This class executes bash commands directly on the local machine."""
         self.config = config_class(**kwargs)
 
+    # 「接收动作、执行命令、捕获异常、返回执行结果」
     def execute(self, action: dict, cwd: str = "", *, timeout: int | None = None) -> dict[str, Any]:
         """Execute a command in the local environment and return the result as a dict."""
         command = action.get("command", "")

@@ -85,6 +85,7 @@ class DefaultAgent:
             )
         )
 
+    # 「控制整个 Agent 循环」
     def run(self, task: str = "", **kwargs) -> dict:
         """Run step() until agent is finished. Returns dictionary with exit_status, submission keys."""
         self.extra_template_vars |= {"task": task, **kwargs}
@@ -123,10 +124,12 @@ class DefaultAgent:
                 break
         return self.messages[-1].get("extra", {})
 
+    # 「一次 Agent 迭代：先请求 Model 决定做什么，再让 Environment 执行。」
     def step(self) -> list[dict]:
         """Query the LM, execute actions."""
         return self.execute_actions(self.query())
 
+    # 「向大模型请求下一步操作：检查预算、调用模型、保存模型响应」
     def query(self) -> dict:
         """Query the model and return model messages. Override to add hooks."""
         if 0 < self.config.step_limit <= self.n_calls or 0 < self.config.cost_limit <= self.cost:
@@ -151,6 +154,7 @@ class DefaultAgent:
         self.add_messages(message)
         return message
 
+    # 「执行模型生成的动作」
     def execute_actions(self, message: dict) -> list[dict]:
         """Execute actions in message, add observation messages, return them."""
         outputs = [self.env.execute(action) for action in message.get("extra", {}).get("actions", [])]

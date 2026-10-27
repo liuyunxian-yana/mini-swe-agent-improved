@@ -109,6 +109,7 @@ environment:
     PIP_PROGRESS_BAR: 'off'
     TQDM_DISABLE: '1'
 model:
+  cost_tracking: ignore_errors
   observation_template: |
     {%- if output.output | length < 10000 -%}
     {
