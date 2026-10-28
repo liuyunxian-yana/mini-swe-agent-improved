@@ -1,4 +1,0 @@
-agent:
-  system_template: |
-    You are a helpful assistant that can interact with a computer.
-    Each shell tool call starts in {{cwd}}. Use paths relative to this directory for project files.

@@ -5,7 +5,7 @@
 
 import os
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Any
 
 import typer
 from rich.console import Console
@@ -186,7 +186,6 @@ def main(
     config_spec: list[str] = typer.Option([str(DEFAULT_CONFIG_FILE)], "-c", "--config", help=_CONFIG_SPEC_HELP_TEXT),
     output: Path | None = typer.Option(DEFAULT_OUTPUT_FILE, "-o", "--output", help="Output trajectory file"),
     exit_immediately: bool = typer.Option(False, "--exit-immediately", help="Exit immediately when the agent wants to finish instead of prompting.", rich_help_panel="Advanced"),
-    workspace: Annotated[Path | None, typer.Option("--workspace", help="Directory where agent commands run")] = None,
 ) -> Any:
     # fmt: on
     configure_if_first_time()
@@ -211,15 +210,9 @@ def main(
         },
         "environment": {
             "environment_class": environment_class or UNSET,
-            "cwd": str(workspace.resolve()) if workspace is not None else UNSET,
         },
     })
     config = recursive_merge(*configs)
-    if config.get("environment", {}).get("environment_class", "local") in (
-        "local",
-        "minisweagent.environments.local.LocalEnvironment",
-    ):
-        config.setdefault("environment", {}).setdefault("cwd", str(Path.cwd()))
 
     # 「先检查配置中有没有用户指定的任务，如果没有，就在终端询问用户要做什么。」
     if (run_task := config.get("run", {}).get("task", UNSET)) is UNSET:
